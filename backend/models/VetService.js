@@ -28,6 +28,14 @@ const vetServiceSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    lat: {
+      type: Number,
+      default: 12.9716, // Default to Bangalore center
+    },
+    lng: {
+      type: Number,
+      default: 77.5946, // Default to Bangalore center
+    },
     addedBy: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,

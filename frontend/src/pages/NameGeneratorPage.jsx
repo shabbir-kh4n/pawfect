@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { HiSparkles, HiRefresh } from 'react-icons/hi';
 import { IoPaw } from 'react-icons/io5';
+import toast from 'react-hot-toast';
 import api from '../api/api';
 
 const NameGeneratorPage = () => {
@@ -36,9 +37,11 @@ const NameGeneratorPage = () => {
       });
       
       setNames(response.data);
+      toast.success('Names generated! 🎉');
     } catch (err) {
-      console.error('Error generating names:', err);
-      setError(err.response?.data?.message || 'Failed to generate names. Please try again.');
+      const errorMessage = err.response?.data?.message || 'Failed to generate names. Please try again.';
+      toast.error(errorMessage);
+      setError(errorMessage);
     } finally {
       setIsGenerating(false);
     }

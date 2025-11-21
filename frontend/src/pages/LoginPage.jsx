@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { HiMail, HiLockClosed } from 'react-icons/hi';
+import toast from 'react-hot-toast';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 
@@ -42,20 +43,13 @@ const LoginPage = () => {
       
       // On success, log the user in and navigate to homepage
       login(response.data);
+      toast.success('Login successful!');
       navigate('/');
     } catch (err) {
-      // Log the full error for debugging
-      console.error('Login error:', err);
-      console.error('Error response:', err.response);
-      
       // Handle errors
-      if (err.response && err.response.data && err.response.data.message) {
-        setError(err.response.data.message);
-      } else if (err.message) {
-        setError(err.message);
-      } else {
-        setError('Login failed. Please try again.');
-      }
+      const errorMessage = err.response?.data?.message || err.message || 'Login failed. Please try again.';
+      toast.error(errorMessage);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

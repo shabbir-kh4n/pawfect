@@ -5,7 +5,7 @@ import {
   HiHeart, 
   HiArrowLeft,
   HiCheckCircle,
-  HiXCircle 
+  HiXCircle
 } from 'react-icons/hi';
 import { 
   MdPets, 
@@ -16,14 +16,18 @@ import {
   MdMedicalServices 
 } from 'react-icons/md';
 import api from '../api/api';
+import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 const PetDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [pet, setPet] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+  const [creatingChat, setCreatingChat] = useState(false);
 
   useEffect(() => {
     const fetchPet = async () => {
@@ -51,6 +55,39 @@ const PetDetailPage = () => {
   const prevPhoto = () => {
     if (pet?.photos?.length > 0) {
       setCurrentPhotoIndex((prev) => (prev - 1 + pet.photos.length) % pet.photos.length);
+    }
+  };
+
+  const handleAdoptRequest = async () => {
+    if (!user) {
+      toast.error('Please log in to start chatting with the pet owner');
+      navigate('/login');
+      return;
+    }
+
+    try {
+      setCreatingChat(true);
+      
+      // Create adoption request and chat
+      const response = await api.post('/api/adoption-requests', {
+        petId: id,
+        requesterName: user.name || user.email,
+        requesterEmail: user.email,
+        requesterPhone: user.phone || 'Not provided',
+        message: `Hi! I'm interested in adopting ${pet.petName}. Can we discuss more about the adoption process?`,
+      });
+
+      toast.success('Chat created! Redirecting...');
+      
+      // Navigate to chat
+      setTimeout(() => {
+        navigate(`/chat/${response.data.request._id}`);
+      }, 500);
+    } catch (err) {
+      console.error('Error creating chat:', err);
+      toast.error(err.response?.data?.message || 'Failed to create chat. Please try again.');
+    } finally {
+      setCreatingChat(false);
     }
   };
 
@@ -106,7 +143,9 @@ const PetDetailPage = () => {
               {pet.photos && pet.photos.length > 0 ? (
                 <div className="relative">
                   <img
-                    src={`http://localhost:5001${pet.photos[currentPhotoIndex]}`}
+                    src={pet.photos[currentPhotoIndex].startsWith('http') 
+                      ? pet.photos[currentPhotoIndex] 
+                      : `http://localhost:5001${pet.photos[currentPhotoIndex]}`}
                     alt={`${pet.petName} - Photo ${currentPhotoIndex + 1}`}
                     className="w-full h-96 object-cover"
                     onError={(e) => {
@@ -158,7 +197,9 @@ const PetDetailPage = () => {
                     }`}
                   >
                     <img
-                      src={`http://localhost:5001${photo}`}
+                      src={photo.startsWith('http') 
+                        ? photo 
+                        : `http://localhost:5001${photo}`}
                       alt={`Thumbnail ${index + 1}`}
                       className="w-full h-20 object-cover"
                     />
@@ -195,9 +236,19 @@ const PetDetailPage = () => {
               </div>
 
               {/* Status Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-200 rounded-lg">
-                <HiCheckCircle className="text-green-500 text-xl" />
-                <span className="text-green-700 font-medium">Available for Adoption</span>
+              <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg ${
+                pet.status === 'Adopted' 
+                  ? 'bg-blue-50 border border-blue-200'
+                  : 'bg-green-50 border border-green-200'
+              }`}>
+                <HiCheckCircle className={`text-xl ${
+                  pet.status === 'Adopted' ? 'text-blue-500' : 'text-green-500'
+                }`} />
+                <span className={`font-medium ${
+                  pet.status === 'Adopted' ? 'text-blue-700' : 'text-green-700'
+                }`}>
+                  {pet.status === 'Adopted' ? 'Adopted' : 'Available for Adoption'}
+                </span>
               </div>
             </div>
 
@@ -330,21 +381,34 @@ const PetDetailPage = () => {
             </div>
 
             {/* Contact CTA */}
-            <div className="bg-gradient-to-r from-orange-500 to-pink-500 rounded-lg shadow-lg p-6 text-white">
-              <h3 className="text-2xl font-bold mb-2 flex items-center gap-2">
-                <HiHeart className="text-3xl" />
-                Interested in {pet.petName}?
-              </h3>
-              <p className="mb-4 text-white/90">
-                This lovely pet is looking for a forever home. Contact us to learn more about the adoption process!
-              </p>
-              <button
-                onClick={() => navigate('/support')}
-                className="w-full bg-white text-orange-500 font-bold py-3 px-6 rounded-lg hover:bg-gray-100 transition-colors shadow-md"
-              >
-                Contact Us to Adopt
-              </button>
-            </div>
+            {pet.status === 'Adopted' ? (
+              <div className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg shadow-lg p-6 text-white text-center">
+                <h3 className="text-2xl font-bold mb-2 flex items-center justify-center gap-2">
+                  <HiCheckCircle className="text-3xl" />
+                  {pet.petName} Has Been Adopted! 🎉
+                </h3>
+                <p className="text-white/90">
+                  This lovely pet has found their forever home. Thank you for your interest in pet adoption!
+                </p>
+              </div>
+            ) : (
+              <div className="bg-gradient-to-r from-orange-500 to-pink-500 rounded-lg shadow-lg p-6 text-white">
+                <h3 className="text-2xl font-bold mb-2 flex items-center gap-2">
+                  <HiHeart className="text-3xl" />
+                  Interested in {pet.petName}?
+                </h3>
+                <p className="mb-4 text-white/90">
+                  This lovely pet is looking for a forever home. Send a request to chat with the pet owner!
+                </p>
+                <button
+                  onClick={handleAdoptRequest}
+                  disabled={creatingChat}
+                  className="w-full bg-white text-orange-500 font-bold py-3 px-6 rounded-lg hover:bg-gray-100 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {creatingChat ? 'Creating Chat...' : 'Start Chat with Owner'}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

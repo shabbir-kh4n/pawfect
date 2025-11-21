@@ -98,6 +98,22 @@ const HealthTrackerPage = () => {
     fetchHealthRecords(newPetId);
   };
 
+  // Handler to delete a pet
+  const handleDeletePet = async () => {
+    if (!selectedPetId) return;
+    if (!window.confirm('Are you sure you want to delete this pet? This action cannot be undone.')) return;
+    try {
+      await api.delete(`/api/pets/${selectedPetId}`);
+      // Remove from local state
+      const updatedPets = pets.filter(p => p._id !== selectedPetId);
+      setPets(updatedPets);
+      setSelectedPetId(updatedPets.length > 0 ? updatedPets[0]._id : '');
+      setHealthRecords([]);
+    } catch (err) {
+      alert('Failed to delete pet.');
+    }
+  };
+
   // Helper function to check if a record is overdue
   const isRecordOverdue = (nextDueDate) => {
     if (!nextDueDate) return false;
@@ -180,13 +196,23 @@ const HealthTrackerPage = () => {
                 <p className="text-gray-500 italic">No pets added yet. Add your first pet!</p>
               )}
             </div>
-            <button
-              onClick={() => setModalContent('add-pet')}
-              className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-colors duration-200 font-medium flex items-center gap-2"
-            >
-              <HiPlus className="text-xl" />
-              Add Pet
-            </button>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setModalContent('add-pet')}
+                className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-colors duration-200 font-medium flex items-center gap-2"
+              >
+                <HiPlus className="text-xl" />
+                Add Pet
+              </button>
+              {selectedPetId && (
+                <button
+                  onClick={handleDeletePet}
+                  className="ml-4 bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition-colors duration-200 font-medium"
+                >
+                  Delete Pet
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -295,6 +321,8 @@ const HealthTrackerPage = () => {
                               (new Date() - new Date(selectedPet.birthDate)) /
                                 (365.25 * 24 * 60 * 60 * 1000)
                             )} years`
+                          : selectedPet.age
+                          ? `${selectedPet.age} years`
                           : 'N/A'}
                       </span>
                     </div>

@@ -39,7 +39,7 @@ A comprehensive MERN stack web application for pet care management, featuring pe
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/shabbir-kh4n/pawfect.git
+git clone https://github.com/shabbir-/pawfect.git
 cd pawfect
 ```
 

@@ -1,14 +1,24 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { HiMenu, HiX } from 'react-icons/hi';
 import { IoPaw } from 'react-icons/io5';
+import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    setIsOpen(false);
+  };
 
   const navLinks = [
     { name: 'Adopt', path: '/adopt' },
     { name: 'Donate Pet', path: '/donate-pet' },
+    { name: 'My Chats', path: '/chats', requiresAuth: true },
     { name: 'Adoption Quiz', path: '/adoption-quiz' },
     { name: 'Health Tracker', path: '/health-tracker' },
     { name: 'Pet Services', path: '/pet-services' },
@@ -29,21 +39,51 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                to={link.path}
-                className="text-gray-600 hover:text-orange-500 transition-colors duration-200 text-sm font-medium"
-              >
-                {link.name}
-              </Link>
-            ))}
-            <Link
-              to="/get-started"
-              className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-colors duration-200 text-sm font-medium"
-            >
-              Get Started
-            </Link>
+            {navLinks.map((link) => {
+              // Skip auth-required links if not logged in
+              if (link.requiresAuth && !user) return null;
+              
+              return (
+                <Link
+                  key={link.name}
+                  to={link.path}
+                  className="text-gray-600 hover:text-orange-500 transition-colors duration-200 text-sm font-medium"
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
+            
+            {user ? (
+              // Logged in: Show user info and logout
+              <div className="flex items-center space-x-4">
+                <span className="text-gray-700 text-sm font-medium">
+                  Hi, {user.name || user.email}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-200 text-sm font-medium"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              // Not logged in: Show login and signup
+              <div className="flex items-center space-x-4">
+                <Link
+                  to="/login"
+                  className="text-gray-600 hover:text-orange-500 transition-colors duration-200 text-sm font-medium"
+                >
+                  Log In
+                </Link>
+                <Link
+                  to="/signup"
+                  className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-colors duration-200 text-sm font-medium"
+                >
+                  Get Started
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -61,23 +101,54 @@ const Navbar = () => {
         {isOpen && (
           <div className="lg:hidden pb-4">
             <div className="flex flex-col space-y-3">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  className="text-gray-600 hover:text-orange-500 transition-colors duration-200 text-sm font-medium py-2"
-                  onClick={() => setIsOpen(false)}
-                >
-                  {link.name}
-                </Link>
-              ))}
-              <Link
-                to="/get-started"
-                className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-colors duration-200 text-sm font-medium text-center"
-                onClick={() => setIsOpen(false)}
-              >
-                Get Started
-              </Link>
+              {navLinks.map((link) => {
+                // Skip auth-required links if not logged in
+                if (link.requiresAuth && !user) return null;
+                
+                return (
+                  <Link
+                    key={link.name}
+                    to={link.path}
+                    className="text-gray-600 hover:text-orange-500 transition-colors duration-200 text-sm font-medium py-2"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {link.name}
+                  </Link>
+                );
+              })}
+              
+              {user ? (
+                // Logged in: Show user info and logout
+                <>
+                  <div className="text-gray-700 text-sm font-medium py-2 border-t border-gray-200 mt-2 pt-3">
+                    Hi, {user.name || user.email}
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-200 text-sm font-medium text-center"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                // Not logged in: Show login and signup
+                <>
+                  <Link
+                    to="/login"
+                    className="text-gray-600 hover:text-orange-500 transition-colors duration-200 text-sm font-medium py-2 border-t border-gray-200 mt-2 pt-3"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Log In
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-colors duration-200 text-sm font-medium text-center"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Get Started
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         )}

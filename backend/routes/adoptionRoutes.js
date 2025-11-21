@@ -126,12 +126,12 @@ router.post('/', protect, upload, async (req, res) => {
 });
 
 // @route   GET /api/adoption
-// @desc    Get all pets available for adoption
+// @desc    Get all pets (including adopted ones)
 // @access  Public
 router.get('/', async (req, res) => {
   try {
     // Find all adoption pets, sorted by most recent first
-    const adoptionPets = await AdoptionPet.find({ status: 'Available' })
+    const adoptionPets = await AdoptionPet.find()
       .sort({ createdAt: -1 })
       .populate('user', 'email'); // Optionally populate user email
 

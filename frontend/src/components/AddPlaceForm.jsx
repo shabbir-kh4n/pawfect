@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { MdLocationOn } from 'react-icons/md';
+import toast from 'react-hot-toast';
 import api from '../api/api';
 
 const AddPlaceForm = ({ onPlaceAdded, onClose }) => {
@@ -45,11 +46,13 @@ const AddPlaceForm = ({ onPlaceAdded, onClose }) => {
       });
 
       // Success - refresh list and close modal
+      toast.success('Vet service added successfully! 🏥');
       onPlaceAdded();
       onClose();
     } catch (err) {
-      console.error('Error adding vet service:', err);
-      setError(err.response?.data?.message || 'Failed to add service. Please try again.');
+      const errorMessage = err.response?.data?.message || 'Failed to add service. Please try again.';
+      toast.error(errorMessage);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

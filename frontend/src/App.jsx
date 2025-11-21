@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import HomePage from './pages/HomePage';
@@ -15,16 +16,21 @@ import PetCareGuidePage from './pages/PetCareGuidePage';
 import AdoptionProcessPage from './pages/AdoptionProcessPage';
 import HealthResourcesPage from './pages/HealthResourcesPage';
 import SupportPage from './pages/SupportPage';
+import ChatPage from './pages/ChatPage';
+import ChatsListPage from './pages/ChatsListPage';
 
 function App() {
   return (
     <Router>
+      <Toaster position="top-center" />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="home" element={<HomePage />} />
           <Route path="adopt" element={<AdoptPage />} />
           <Route path="adopt/:id" element={<PetDetailPage />} />
+          <Route path="chats" element={<ChatsListPage />} />
+          <Route path="chat/:requestId" element={<ChatPage />} />
           <Route path="donate-pet" element={<DonatePetPage />} />
           <Route path="adoption-quiz" element={<AdoptionQuizPage />} />
           <Route path="health-tracker" element={<HealthTrackerPage />} />

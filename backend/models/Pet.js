@@ -20,14 +20,34 @@ const petSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    // Pet's species
+    species: {
+      type: String,
+      trim: true,
+    },
+    // Pet's description
+    description: {
+      type: String,
+      trim: true,
+    },
     // Pet's birth date
     birthDate: {
       type: Date,
+    },
+    // Pet's age (optional, fallback if no birthDate)
+    age: {
+      type: Number,
+      min: [0, 'Age must be a positive number'],
     },
     // Pet's weight (in kg or lbs)
     weight: {
       type: Number,
       min: [0, 'Weight must be a positive number'],
+    },
+    // Pet's image (optional, for adopted pets)
+    image: {
+      type: String,
+      trim: true,
     },
   },
   {

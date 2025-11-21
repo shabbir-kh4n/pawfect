@@ -23,14 +23,10 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'User already exists with this email' });
     }
 
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Create new user
+    // Create new user (password will be hashed by the pre-save hook in User model)
     const user = await User.create({
       email,
-      password: hashedPassword,
+      password,
     });
 
     // Generate JWT token

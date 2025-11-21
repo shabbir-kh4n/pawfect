@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { HiArrowLeft, HiMail, HiLockClosed } from 'react-icons/hi';
+import toast from 'react-hot-toast';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 
@@ -31,12 +32,14 @@ const SignUpPage = () => {
     
     // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
+      toast.error('Passwords do not match');
       setError('Passwords do not match');
       return;
     }
     
     // Validate password length
     if (formData.password.length < 6) {
+      toast.error('Password must be at least 6 characters');
       setError('Password must be at least 6 characters');
       return;
     }
@@ -55,20 +58,13 @@ const SignUpPage = () => {
       
       // On success, log the user in and navigate to homepage
       login(response.data);
+      toast.success('Account created successfully!');
       navigate('/');
     } catch (err) {
-      // Log the full error for debugging
-      console.error('Registration error:', err);
-      console.error('Error response:', err.response);
-      
       // Handle errors
-      if (err.response && err.response.data && err.response.data.message) {
-        setError(err.response.data.message);
-      } else if (err.message) {
-        setError(err.message);
-      } else {
-        setError('Registration failed. Please try again.');
-      }
+      const errorMessage = err.response?.data?.message || err.message || 'Registration failed. Please try again.';
+      toast.error(errorMessage);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

@@ -2,24 +2,49 @@ import { Link } from 'react-router-dom';
 import { HiLocationMarker } from 'react-icons/hi';
 
 const PetCard = ({ pet }) => {
-  // Build full image URL
-  const imageUrl = pet.photos && pet.photos.length > 0 
-    ? `http://localhost:5001${pet.photos[0]}`
-    : 'https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=400&h=400&fit=crop'; // Fallback image
+  const isAdopted = pet.status === 'Adopted';
+  
+  // Build full image URL - check if it's already a full URL or a local path
+  const getImageUrl = () => {
+    if (!pet.photos || pet.photos.length === 0) {
+      return 'https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=400&h=400&fit=crop';
+    }
+    
+    const photoUrl = pet.photos[0];
+    // If it starts with http:// or https://, it's already a complete URL
+    if (photoUrl.startsWith('http://') || photoUrl.startsWith('https://')) {
+      return photoUrl;
+    }
+    // Otherwise, it's a local upload, prepend the server URL
+    return `http://localhost:5001${photoUrl}`;
+  };
+
+  const imageUrl = getImageUrl();
 
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
+    <div className={`bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 relative ${
+      isAdopted ? 'opacity-60' : ''
+    }`}>
       {/* Pet Image */}
-      <div className="h-64 overflow-hidden">
+      <div className="h-64 overflow-hidden relative">
         <img
           src={imageUrl}
           alt={pet.petName}
-          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+          className={`w-full h-full object-cover hover:scale-105 transition-transform duration-300 ${
+            isAdopted ? 'filter grayscale blur-[2px]' : ''
+          }`}
           onError={(e) => {
             // Fallback if image fails to load
             e.target.src = 'https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=400&h=400&fit=crop';
           }}
         />
+        {isAdopted && (
+          <div className="absolute inset-0 bg-gray-900 bg-opacity-40 flex items-center justify-center">
+            <span className="bg-blue-500 text-white px-6 py-3 rounded-lg font-bold text-xl shadow-lg">
+              ADOPTED
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Pet Info */}
@@ -64,9 +89,13 @@ const PetCard = ({ pet }) => {
         {/* View Details Button */}
         <Link
           to={`/adopt/${pet._id}`}
-          className="block w-full bg-orange-500 text-white text-center py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors duration-200 font-medium"
+          className={`block w-full text-white text-center py-2 px-4 rounded-lg transition-colors duration-200 font-medium ${
+            isAdopted 
+              ? 'bg-gray-400 cursor-not-allowed' 
+              : 'bg-orange-500 hover:bg-orange-600'
+          }`}
         >
-          View Details
+          {isAdopted ? 'Already Adopted' : 'View Details'}
         </Link>
       </div>
     </div>

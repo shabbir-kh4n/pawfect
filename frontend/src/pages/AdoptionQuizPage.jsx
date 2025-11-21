@@ -1,10 +1,15 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { HiArrowLeft, HiArrowRight, HiHome } from 'react-icons/hi';
+import toast from 'react-hot-toast';
+import api from '../api/api';
+import PetCard from '../components/PetCard';
 
 const AdoptionQuizPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [answers, setAnswers] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [matches, setMatches] = useState(null);
 
   const totalSteps = 6;
 
@@ -81,13 +86,25 @@ const AdoptionQuizPage = () => {
     });
   };
 
+  const submitQuiz = async () => {
+    setLoading(true);
+    try {
+      const response = await api.post('/api/ai/quiz-match', { userAnswers: answers });
+      setMatches(response.data);
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Failed to find matches. Please try again.';
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleNext = () => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Quiz complete - handle results
-      console.log('Quiz completed!', answers);
-      // You can navigate to results page or show results
+      // Quiz complete - submit to AI
+      submitQuiz();
     }
   };
 
@@ -99,6 +116,97 @@ const AdoptionQuizPage = () => {
 
   const progressPercentage = (currentStep / totalSteps) * 100;
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-orange-500 border-t-transparent mb-4"></div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            🐾 AI is analyzing your compatibility...
+          </h2>
+          <p className="text-gray-600">Finding your pawfect matches!</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Results view
+  if (matches) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
+        {/* Header */}
+        <div className="bg-white border-b border-gray-200 py-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 text-orange-500 hover:text-orange-600 transition-colors duration-200 mb-6"
+            >
+              <HiArrowLeft className="text-xl" />
+              <span className="font-medium">Back to Home</span>
+            </Link>
+
+            <div className="text-center">
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                🎉 Your PawFect Matches!
+              </h1>
+              <p className="text-gray-600">
+                Based on your quiz answers, here are the top 3 pets perfect for you
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Results Grid */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {matches.map((pet, index) => (
+              <div key={pet._id} className="relative">
+                {/* Match Badge */}
+                <div className="absolute -top-3 -left-3 z-10 bg-orange-500 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-lg shadow-lg">
+                  #{index + 1}
+                </div>
+                
+                <PetCard pet={pet} />
+                
+                {/* Match Reason */}
+                <div className="mt-4 bg-orange-50 rounded-lg p-4 border-2 border-orange-200">
+                  <h3 className="font-semibold text-orange-900 mb-2 flex items-center gap-2">
+                    <span>💡</span> Why this match?
+                  </h3>
+                  <p className="text-gray-700 text-sm leading-relaxed">
+                    {pet.matchReason}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              to="/adopt"
+              className="px-8 py-3 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 transition-colors text-center"
+            >
+              Browse All Pets
+            </Link>
+            <button
+              onClick={() => {
+                setMatches(null);
+                setCurrentStep(1);
+                setAnswers({});
+              }}
+              className="px-8 py-3 bg-white text-gray-700 border-2 border-gray-300 rounded-lg font-medium hover:border-orange-500 hover:text-orange-500 transition-colors"
+            >
+              Retake Quiz
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Quiz view
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
       {/* Header */}

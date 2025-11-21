@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { HiUpload, HiInformationCircle } from 'react-icons/hi';
 import { MdLocationOn, MdPerson } from 'react-icons/md';
 import { IoPaw } from 'react-icons/io5';
+import toast from 'react-hot-toast';
 import api from '../api/api';
 
 const DonatePetPage = () => {
@@ -125,11 +126,13 @@ const DonatePetPage = () => {
 
       console.log('Pet donation submitted successfully:', response.data);
       
+      toast.success('Pet submitted successfully! 🐾');
       // Navigate to adopt page on success
       navigate('/adopt');
     } catch (err) {
-      console.error('Error submitting pet donation:', err);
-      setError(err.response?.data?.message || 'Failed to submit pet donation. Please try again.');
+      const errorMessage = err.response?.data?.message || 'Failed to submit pet donation. Please try again.';
+      toast.error(errorMessage);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
