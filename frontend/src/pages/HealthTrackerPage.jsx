@@ -221,17 +221,17 @@ const HealthTrackerPage = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Column */}
-          <div className="space-y-6">
+          <div className="space-y-6 flex flex-col">
             {/* Overdue Card */}
-            <div className="bg-red-50 rounded-lg p-6 border border-red-200">
-              <div className="flex items-center gap-2 mb-4">
+            <div className="bg-red-50 rounded-lg p-6 border border-red-200 flex flex-col max-h-[300px]">
+              <div className="flex items-center gap-2 mb-4 flex-shrink-0">
                 <HiExclamation className="text-red-500 text-xl" />
                 <h2 className="text-xl font-bold text-gray-900">
                   Overdue ({overdueRecords.length})
                 </h2>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-4 overflow-y-auto flex-1 pr-2 scrollbar-hide">
                 {recordsLoading ? (
                   <div className="bg-white p-6 rounded-lg text-center">
                     <p className="text-gray-500">Loading records...</p>
@@ -266,7 +266,7 @@ const HealthTrackerPage = () => {
 
             {/* Pet Profile Card */}
             {selectedPet ? (
-              <div className="bg-orange-50 rounded-lg p-6 border border-orange-200">
+              <div className="bg-orange-50 rounded-lg p-6 border border-orange-200 h-[400px] flex flex-col">
                 <h2 className="text-xl font-bold text-gray-900 mb-6">Pet Profile</h2>
 
                 <div className="flex flex-col items-center">
@@ -274,9 +274,16 @@ const HealthTrackerPage = () => {
                   <div className="w-32 h-32 rounded-full overflow-hidden mb-4 border-4 border-white shadow-md bg-white flex items-center justify-center">
                     {selectedPet.image ? (
                       <img
-                        src={selectedPet.image}
+                        src={selectedPet.image.startsWith('http') 
+                          ? selectedPet.image 
+                          : `http://localhost:5001${selectedPet.image}`}
                         alt={selectedPet.name}
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.src = '';
+                          e.target.style.display = 'none';
+                          e.target.parentElement.innerHTML = '<span class="text-5xl">🐾</span>';
+                        }}
                       />
                     ) : (
                       <span className="text-5xl">🐾</span>
@@ -337,22 +344,23 @@ const HealthTrackerPage = () => {
           </div>
 
           {/* Right Column */}
-          <div className="space-y-6">
+          <div className="space-y-6 flex flex-col">
             {/* Upcoming Reminders Card */}
-            <div className="bg-blue-50 rounded-lg p-6 border border-blue-200">
-              <div className="flex items-center gap-2 mb-4">
+            <div className="bg-blue-50 rounded-lg p-6 border border-blue-200 flex flex-col max-h-[300px]">
+              <div className="flex items-center gap-2 mb-4 flex-shrink-0">
                 <HiBell className="text-blue-500 text-xl" />
                 <h2 className="text-xl font-bold text-gray-900">
                   Upcoming Reminders ({upcomingRecords.length})
                 </h2>
               </div>
 
-              {recordsLoading ? (
-                <div className="bg-white p-6 rounded-lg text-center">
-                  <p className="text-gray-500">Loading reminders...</p>
-                </div>
-              ) : upcomingRecords.length > 0 ? (
-                <div className="space-y-3">
+              <div className="overflow-y-auto flex-1 pr-2 scrollbar-hide">
+                {recordsLoading ? (
+                  <div className="bg-white p-6 rounded-lg text-center">
+                    <p className="text-gray-500">Loading reminders...</p>
+                  </div>
+                ) : upcomingRecords.length > 0 ? (
+                  <div className="space-y-3">
                   {upcomingRecords.map((record) => (
                     <div key={record._id} className="bg-white p-4 rounded-lg">
                       <div className="flex items-center gap-3">
@@ -370,17 +378,18 @@ const HealthTrackerPage = () => {
                       </div>
                     </div>
                   ))}
-                </div>
-              ) : (
-                <div className="bg-white p-6 rounded-lg text-center">
-                  <p className="text-gray-500">No upcoming reminders</p>
-                </div>
-              )}
+                  </div>
+                ) : (
+                  <div className="bg-white p-6 rounded-lg text-center">
+                    <p className="text-gray-500">No upcoming reminders</p>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Health Records Card */}
-            <div className="bg-orange-50 rounded-lg p-6 border border-orange-200">
-              <div className="flex justify-between items-center mb-6">
+            <div className="bg-orange-50 rounded-lg p-6 border border-orange-200 flex flex-col h-[400px]">
+              <div className="flex justify-between items-center mb-6 flex-shrink-0">
                 <div>
                   <h2 className="text-xl font-bold text-gray-900">Health Records</h2>
                   <p className="text-sm text-gray-600">
@@ -396,7 +405,7 @@ const HealthTrackerPage = () => {
                 </button>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-4 overflow-y-auto flex-1 pr-2 scrollbar-hide">
                 {recordsLoading ? (
                   <div className="bg-white p-6 rounded-lg text-center">
                     <p className="text-gray-500">Loading records...</p>

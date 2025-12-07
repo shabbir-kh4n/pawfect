@@ -5,6 +5,7 @@ A comprehensive MERN stack web application for pet care management, featuring pe
 ## ✨ Features
 
 - **Pet Adoption System**: Browse, search, and adopt pets with detailed profiles and photo galleries
+- **Real-Time Chat System**: Direct messaging between pet owners and adopters using Socket.IO
 - **Veterinary Services Directory**: Find veterinary clinics, emergency services, and 24/7 care facilities
 - **Health Records Management**: Track and manage pet health records
 - **AI Name Generator**: Generate creative pet names using Google Gemini AI
@@ -19,6 +20,7 @@ A comprehensive MERN stack web application for pet care management, featuring pe
 - Tailwind CSS
 - Axios 1.12.2
 - React Router
+- Socket.IO Client (real-time chat)
 
 ### Backend
 - Node.js
@@ -26,6 +28,7 @@ A comprehensive MERN stack web application for pet care management, featuring pe
 - MongoDB
 - Mongoose 8.19.2
 - JWT Authentication
+- Socket.IO (real-time chat)
 - Multer (file uploads)
 - Google Generative AI (Gemini)
 
@@ -135,8 +138,22 @@ pawfect/
 - `GET /api/records` - Get all records
 - `POST /api/records` - Create health record (protected)
 
+### Chat System
+- `GET /api/chats` - Get all chats for current user (protected)
+- `GET /api/chats/request/:requestId` - Get or create chat for adoption request (protected)
+- `GET /api/chats/:chatId/messages` - Get chat messages (protected)
+- `POST /api/chats/:chatId/messages` - Send message in chat (protected)
+- `DELETE /api/chats/:chatId` - Delete chat (protected)
+- `POST /api/adoption-requests/:requestId/confirm-completion` - Confirm adoption completion (protected)
+
 ### AI Name Generator
 - `POST /api/ai/generate-name` - Generate pet names with AI
+
+## 💬 Real-Time Chat System
+
+The application features a real-time chat system powered by Socket.IO, enabling direct communication between pet owners and potential adopters. When a user submits an adoption request, a chat room is automatically created. Both parties can communicate in real-time, and adoption completion requires confirmation from both the pet owner and adopter.
+
+For detailed documentation on the chat system, see [CHAT_SYSTEM.md](CHAT_SYSTEM.md).
 
 ## 🤖 AI Integration
 
@@ -155,23 +172,5 @@ This project uses Google Gemini AI for generating creative pet names. To get you
 | `MONGO_URI` | MongoDB connection string |
 | `JWT_SECRET` | Secret key for JWT tokens |
 | `GEMINI_API_KEY` | Google Gemini API key |
-
-## 📝 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
-## 👥 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 🐛 Issues
-
-If you find any bugs or have feature requests, please create an issue on GitHub.
-
-## 📧 Contact
-
-For questions or support, please open an issue on GitHub.
-
----
 
 Made with ❤️ for pet lovers everywhere 🐶🐱

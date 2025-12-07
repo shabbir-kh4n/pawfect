@@ -29,6 +29,19 @@ const PetDetailPage = () => {
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [creatingChat, setCreatingChat] = useState(false);
 
+  // Helper function to build full image URL
+  const getImageUrl = (photoPath) => {
+    if (!photoPath) {
+      return 'https://via.placeholder.com/400x300?text=Pet+Photo';
+    }
+    // If it starts with http:// or https://, it's already a complete URL
+    if (photoPath.startsWith('http://') || photoPath.startsWith('https://')) {
+      return photoPath;
+    }
+    // Otherwise, it's a local upload, prepend the server URL
+    return `http://localhost:5001${photoPath}`;
+  };
+
   useEffect(() => {
     const fetchPet = async () => {
       try {
@@ -143,9 +156,7 @@ const PetDetailPage = () => {
               {pet.photos && pet.photos.length > 0 ? (
                 <div className="relative">
                   <img
-                    src={pet.photos[currentPhotoIndex].startsWith('http') 
-                      ? pet.photos[currentPhotoIndex] 
-                      : `http://localhost:5001${pet.photos[currentPhotoIndex]}`}
+                    src={getImageUrl(pet.photos[currentPhotoIndex])}
                     alt={`${pet.petName} - Photo ${currentPhotoIndex + 1}`}
                     className="w-full h-96 object-cover"
                     onError={(e) => {
@@ -197,11 +208,12 @@ const PetDetailPage = () => {
                     }`}
                   >
                     <img
-                      src={photo.startsWith('http') 
-                        ? photo 
-                        : `http://localhost:5001${photo}`}
+                      src={getImageUrl(photo)}
                       alt={`Thumbnail ${index + 1}`}
                       className="w-full h-20 object-cover"
+                      onError={(e) => {
+                        e.target.src = 'https://via.placeholder.com/150x100?text=Photo';
+                      }}
                     />
                   </button>
                 ))}
