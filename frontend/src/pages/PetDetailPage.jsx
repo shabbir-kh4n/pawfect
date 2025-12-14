@@ -71,6 +71,19 @@ const PetDetailPage = () => {
     }
   };
 
+  // Helper function to generate health status text based on boolean values
+  const generateHealthStatus = (vaccinated, spayedNeutered) => {
+    if (vaccinated && spayedNeutered) {
+      return 'Fully vaccinated and neutered';
+    } else if (vaccinated) {
+      return 'Vaccinated';
+    } else if (spayedNeutered) {
+      return 'Neutered';
+    } else {
+      return 'Not vaccinated or neutered';
+    }
+  };
+
   const handleAdoptRequest = async () => {
     if (!user) {
       toast.error('Please log in to start chatting with the pet owner');
@@ -321,12 +334,13 @@ const PetDetailPage = () => {
                 Health Information
               </h2>
               
-              {pet.healthStatus && (
-                <div className="mb-4">
-                  <p className="text-sm text-gray-500 mb-1">Health Status</p>
-                  <p className="text-gray-900">{pet.healthStatus}</p>
-                </div>
-              )}
+              {/* Health Status - Generated dynamically from boolean values */}
+              <div className="mb-4">
+                <p className="text-sm text-gray-500 mb-1">Health Status</p>
+                <p className="text-gray-900 font-medium">
+                  {generateHealthStatus(pet.vaccinated, pet.spayedNeutered)}
+                </p>
+              </div>
               
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex items-center gap-2">

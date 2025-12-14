@@ -80,14 +80,14 @@ const Footer = () => {
             <h3 className="text-gray-800 font-semibold mb-4">Connect</h3>
             <div className="flex space-x-4 mb-4">
               <a
-                href="mailto:contact@pawfectcare.com"
+                href="mailto:helloshabbirkhanhi@gmail.com"
                 className="text-gray-600 hover:text-orange-500 transition-colors duration-200"
                 aria-label="Email"
               >
                 <HiMail className="text-2xl" />
               </a>
               <a
-                href="https://github.com"
+                href="https://github.com/shabbir-kh4n/pawfect.git"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-600 hover:text-orange-500 transition-colors duration-200"
@@ -96,7 +96,7 @@ const Footer = () => {
                 <FaGithub className="text-2xl" />
               </a>
               <a
-                href="https://linkedin.com"
+                href="www.linkedin.com/in/gulam-shabbir-khan-530528223"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-600 hover:text-orange-500 transition-colors duration-200"
@@ -106,7 +106,7 @@ const Footer = () => {
               </a>
             </div>
             <p className="text-gray-600 text-sm">
-              CSE AI Themed | College Mini Project
+              College Mini Project
             </p>
           </div>
         </div>
@@ -114,7 +114,7 @@ const Footer = () => {
         {/* Bottom Section */}
         <div className="mt-8 pt-8 border-t border-gray-200">
           <p className="text-center text-gray-600 text-sm">
-            © 2025 PawFect Care. Built with <span className="text-red-500">❤️</span> by pets and their families.
+            © 2025 PawFect Care. Built with <span className="text-red-500">❤️</span> for pets and their families.
           </p>
         </div>
       </div>
