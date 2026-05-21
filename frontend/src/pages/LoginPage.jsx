@@ -12,6 +12,7 @@ const LoginPage = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [emailVerificationError, setEmailVerificationError] = useState(false);
   
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -48,8 +49,11 @@ const LoginPage = () => {
     } catch (err) {
       // Handle errors
       const errorMessage = err.response?.data?.message || err.message || 'Login failed. Please try again.';
+      const isEmailVerificationError = err.response?.status === 403;
+      
       toast.error(errorMessage);
       setError(errorMessage);
+      setEmailVerificationError(isEmailVerificationError);
     } finally {
       setLoading(false);
     }
@@ -68,8 +72,15 @@ const LoginPage = () => {
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           {/* Error Message */}
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-              {error}
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm space-y-2">
+              <p>{error}</p>
+              {emailVerificationError && (
+                <p className="text-sm">
+                  <Link to="/signup" className="font-semibold hover:underline">
+                    Request a new verification link →
+                  </Link>
+                </p>
+              )}
             </div>
           )}
           
@@ -114,6 +125,14 @@ const LoginPage = () => {
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
                 placeholder="Enter your password"
               />
+            </div>
+            <div className="mt-2 text-right">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-orange-500 hover:text-orange-600 font-medium"
+              >
+                Forgot Password?
+              </Link>
             </div>
           </div>
 

@@ -33,6 +33,9 @@ A comprehensive full-stack MERN application for pet care management and adoption
 - Protected routes and API endpoints
 - Role-based access control (Pet Owner, Adopter)
 - Password encryption using bcrypt
+- Email verification with 24-hour token expiry
+- Admin account bypass for email verification (demo accounts)
+- Secure password reset with email verification
 
 ### 🎨 User Experience
 - Fully responsive design optimized for mobile, tablet, and desktop
@@ -92,6 +95,7 @@ PORT=5001
 MONGO_URI=mongodb://localhost:27017/pawfectcare
 JWT_SECRET=your_jwt_secret_key_here
 GEMINI_API_KEY=your_gemini_api_key_here
+FRONTEND_URL=http://localhost:5173
 ```
 
 ### 3. Frontend Setup
@@ -116,7 +120,25 @@ The application will be available at:
 - Frontend: http://localhost:5174
 - Backend: http://localhost:5001
 
-## 📁 Project Structure
+## � User Registration & Admin Accounts
+
+### User Signup
+When signing up, users must provide:
+- **Full Name**: Display name shown in the application
+- **Email**: Used for authentication and notifications
+- **Password**: At least 6 characters (bcrypt encrypted)
+- **Confirm Password**: Must match the password field
+
+After registration, users receive a verification email with a 24-hour valid link to confirm their email address.
+
+### Admin Accounts
+The following admin accounts bypass email verification during login:
+- `demo@pawfect.com`
+- `shabbir@gmail.com`
+
+These accounts are useful for testing and development purposes. Regular users must verify their email before logging in.
+
+## �📁 Project Structure
 
 ```
 pawfect/
@@ -140,8 +162,11 @@ pawfect/
 ## 🔑 API Endpoints
 
 ### Authentication
-- `POST /api/users/register` - Register new user
+- `POST /api/users/register` - Register new user (requires: name, email, password)
 - `POST /api/users/login` - User login
+- `POST /api/users/verify-email/:token` - Verify email address
+- `POST /api/users/forgot-password` - Request password reset
+- `POST /api/users/resend-verification-email` - Resend verification email
 
 ### Pets
 - `GET /api/pets` - Get all pets
@@ -208,6 +233,7 @@ This project uses Google Gemini AI for:
 | `MONGO_URI` | MongoDB connection string | `mongodb://localhost:27017/pawfectcare` |
 | `JWT_SECRET` | Secret key for JWT tokens | `your_secure_random_string` |
 | `GEMINI_API_KEY` | Google Gemini API key | `AIza...` |
+| `FRONTEND_URL` | Frontend application URL for email links | `http://localhost:5173` |
 
 ## 🎯 Learning Outcomes
 
@@ -218,10 +244,12 @@ This project demonstrates proficiency in:
 - **State Management**: React Context API for authentication
 - **Database Design**: MongoDB schema design and relationships
 - **AI Integration**: Google Gemini API implementation
-- **Authentication & Authorization**: JWT-based security
+- **Authentication & Authorization**: JWT-based security with email verification
+- **Email Verification**: Secure email validation workflow with token expiry
 - **Responsive Design**: Mobile-first approach with Tailwind CSS
 - **File Upload Handling**: Multer for image uploads
 - **Error Handling**: Comprehensive error management on frontend and backend
+- **Form Validation**: Client and server-side validation for user data
 
 ## 🚧 Future Enhancements
 

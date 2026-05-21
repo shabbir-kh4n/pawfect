@@ -3,6 +3,13 @@ const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema(
   {
+    name: {
+      type: String,
+      required: [true, 'Name is required'],
+      trim: true,
+      minlength: [2, 'Name must be at least 2 characters'],
+      maxlength: [50, 'Name cannot exceed 50 characters'],
+    },
     email: {
       type: String,
       required: [true, 'Email is required'],
@@ -15,6 +22,26 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Password is required'],
       minlength: [6, 'Password must be at least 6 characters'],
+    },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    emailVerificationToken: {
+      type: String,
+      default: null,
+    },
+    emailVerificationExpiry: {
+      type: Date,
+      default: null,
+    },
+    resetToken: {
+      type: String,
+      default: null,
+    },
+    resetTokenExpiry: {
+      type: Date,
+      default: null,
     },
   },
   {

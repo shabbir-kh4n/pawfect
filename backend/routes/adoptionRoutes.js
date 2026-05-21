@@ -1,45 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
 const path = require('path');
 const { protect } = require('../middleware/authMiddleware');
+const { uploadMultipleImages, handleMulterError } = require('../config/multerConfig');
 const AdoptionPet = require('../models/AdoptionPet');
-
-// Configure multer disk storage
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Save files to uploads folder
-  },
-  filename: function (req, file, cb) {
-    // Create unique filename: timestamp + original extension
-    const uniqueName = Date.now() + path.extname(file.originalname);
-    cb(null, uniqueName);
-  }
-});
-
-// File filter to accept only images
-const fileFilter = (req, file, cb) => {
-  // Accept only image files
-  if (file.mimetype.startsWith('image/')) {
-    cb(null, true);
-  } else {
-    cb(new Error('Only image files are allowed!'), false);
-  }
-};
-
-// Create multer upload middleware - accept up to 5 photos
-const upload = multer({ 
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB max file size
-  }
-}).array('photos', 5);
 
 // @route   POST /api/adoption
 // @desc    Create a new pet listing for adoption
 // @access  Protected
-router.post('/', protect, upload, async (req, res) => {
+router.post('/', protect, uploadMultipleImages, handleMulterError, async (req, res) => {
   try {
     console.log('Received adoption request from user:', req.user?.id);
     console.log('Request body:', req.body);

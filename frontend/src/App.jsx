@@ -12,6 +12,9 @@ import PetServicesPage from './pages/PetServicesPage';
 import NameGeneratorPage from './pages/NameGeneratorPage';
 import SignUpPage from './pages/SignUpPage';
 import LoginPage from './pages/LoginPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
+import VerifyEmailPage from './pages/VerifyEmailPage';
 import PetCareGuidePage from './pages/PetCareGuidePage';
 import AdoptionProcessPage from './pages/AdoptionProcessPage';
 import HealthResourcesPage from './pages/HealthResourcesPage';
@@ -39,6 +42,9 @@ function App() {
           <Route path="signup" element={<SignUpPage />} />
           <Route path="get-started" element={<SignUpPage />} />
           <Route path="login" element={<LoginPage />} />
+          <Route path="forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="reset-password/:token" element={<ResetPasswordPage />} />
+          <Route path="verify-email/:token" element={<VerifyEmailPage />} />
           <Route path="pet-care-guide" element={<PetCareGuidePage />} />
           <Route path="adoption-process" element={<AdoptionProcessPage />} />
           <Route path="health-resources" element={<HealthResourcesPage />} />
