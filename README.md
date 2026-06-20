@@ -254,7 +254,6 @@ This project demonstrates proficiency in:
 ## 🚧 Future Enhancements
 
 - [ ] Push notifications for new messages
-- [ ] Advanced search filters with AI recommendations
 - [ ] Video call integration for pet viewing
 - [ ] Payment gateway for adoption fees
 - [ ] Admin dashboard for platform management
@@ -262,21 +261,13 @@ This project demonstrates proficiency in:
 - [ ] Multi-language support
 - [ ] Social media integration for sharing pets
 
-## 🤝 Contributing
-
-This is an academic project, but suggestions and feedback are welcome!
 
 ## 📧 Contact
-
 
 - Email: helloshabbirkhanhi@gmail.com
 - GitHub: [@shabbir-kh4n](https://github.com/shabbir-kh4n)
 - LinkedIn: [Gulam Shabbir Khan](https://www.linkedin.com/in/gulam-shabbir-khan-530528223)
 
-## 📄 License
-
-This project is open source and available for educational purposes.
 
 ---
 
-Made with ❤️ for pets and their families 🐶🐱
